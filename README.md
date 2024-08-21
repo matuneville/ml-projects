@@ -1,6 +1,6 @@
 # ml-projects
 
-This repository contains a variety of Machine Learning projects and implementations, including both complete and simple classification and prediction projects, and also foundational algorithms developed from scratch. It showcases practical applications and theoretical insights across different machine learning methodologies.
+This repository contains a variety of Machine Learning projects and implementations, including both complete and simple classification and prediction tasks, as well as foundational algorithms developed from scratch. It also features comprehensive analyses and typical data science workflows, and showcases practical applications and theoretical insights across different machine learning methodologies.
 
 ## Cool projects
 
