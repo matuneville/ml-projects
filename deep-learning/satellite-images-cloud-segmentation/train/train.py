@@ -1,6 +1,7 @@
 import time
 import torch
 from .utils import *
+from tqdm import tqdm
 
 def train(model, train_dl, valid_dl, loss_fn, optimizer, epochs, device):
     start_time = time.time()
@@ -12,18 +13,17 @@ def train(model, train_dl, valid_dl, loss_fn, optimizer, epochs, device):
     valid_hist_acc = [0.] * epochs
     valid_hist_loss = [0.] * epochs
 
-    for epoch in range(epochs):
-
+    for epoch in tqdm(range(epochs), desc='Training Progress', unit='epoch'):
         model.train()
         train_loss = 0.0
         train_correct = 0
 
         for x_batch, y_batch in train_dl:
             x_batch, y_batch = x_batch.to(device), y_batch.to(device)
-            pred = model(x_batch).squeeze()  # 1. Forward pass
-            loss = loss_fn(pred, y_batch.float())  # 2. Calc loss
+            optimizer.zero_grad()  # 1. Restart gradients
+            pred = model(x_batch)  # 2. Forward pass
+            loss = loss_fn(pred, y_batch.float())  # 3. Calc loss
 
-            optimizer.zero_grad()  # 3. Restart gradients
             loss.backward()  # 4. Backward pass
             optimizer.step()  # 5. Step forward
 
@@ -37,7 +37,7 @@ def train(model, train_dl, valid_dl, loss_fn, optimizer, epochs, device):
         with torch.no_grad():
             for x_batch, y_batch in valid_dl:
                 x_batch, y_batch = x_batch.to(device), y_batch.to(device)
-                pred = model(x_batch).squeeze()  # 1. Predict
+                pred = model(x_batch)  # 1. Predict
                 loss = loss_fn(pred, y_batch.float())  # 2. Calc loss
 
                 valid_loss += loss.item() * x_batch.size(0)  # Accumulate loss
@@ -45,13 +45,13 @@ def train(model, train_dl, valid_dl, loss_fn, optimizer, epochs, device):
 
         train_hist_loss[epoch] = train_loss / len(train_dl.dataset)
         train_hist_acc[epoch] = train_correct / len(train_dl.dataset)
-        valid_hist_loss[epoch] = valid_loss / len(train_dl.dataset)
-        valid_hist_acc[epoch] = valid_correct / len(train_dl.dataset)
+        valid_hist_loss[epoch] = valid_loss / len(valid_dl.dataset)
+        valid_hist_acc[epoch] = valid_correct / len(valid_dl.dataset)
 
         torch.cuda.empty_cache()
 
         elapsed_time = (time.time() - start_time) / 60
-        print('--------------------------------------------------')
+        print(f'--------------------------------------------------')
         print(f'Epoch {epoch + 1}, time elapsed: {elapsed_time:.2f} min\n'
               f'Training accuracy: {train_hist_acc[epoch]:.4f}, Training loss: {train_hist_loss[epoch]:.4f}\n'
               f'Validation accuracy: {valid_hist_acc[epoch]:.4f}, Validation loss: {valid_hist_loss[epoch]:.4f}')
