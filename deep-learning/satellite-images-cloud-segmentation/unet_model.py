@@ -44,7 +44,7 @@ class UNet(nn.Module):
             nn.ReLU(),
 
             nn.MaxPool2d(kernel_size=2, stride=2, padding=0),
-            nn.Dropout(0.25)
+            nn.Dropout(0.1)
         )
         return contract
 
@@ -67,7 +67,7 @@ class UNet(nn.Module):
             nn.BatchNorm2d(out_channels),
             nn.ReLU(),
 
-            nn.Dropout(0.25),
+            nn.Dropout(0.1),
             nn.ConvTranspose2d(out_channels, out_channels, kernel_size=2, stride=2, padding=0, output_padding=0),
         )
         return expand

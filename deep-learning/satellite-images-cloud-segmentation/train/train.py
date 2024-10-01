@@ -1,59 +1,54 @@
-import time
-import torch
 from .utils import *
-from tqdm import tqdm
 
-def train(model, train_dl, valid_dl, loss_fn, optimizer, epochs, device):
-    start_time = time.time()
+def train(model, train_dl, valid_dl, loss_fn, optimizer, acc_fn, epochs=1):
+    train_loss, valid_loss = [], []
+    train_acc_history, valid_acc_history = [], []
 
-    model.to(device)
+    for epoch in range(epochs):
+        print(f'Epoch {epoch + 1}/{epochs} -------------------------')
 
-    train_hist_acc = [0.] * epochs
-    train_hist_loss = [0.] * epochs
-    valid_hist_acc = [0.] * epochs
-    valid_hist_loss = [0.] * epochs
+        for phase in ['train', 'valid']:
+            if phase == 'train':
+                model.train(True)
+                dataloader = train_dl
+            else:
+                model.train(False)
+                dataloader = valid_dl
 
-    for epoch in tqdm(range(epochs), desc='Training Progress', unit='epoch'):
-        model.train()
-        train_loss = 0.0
-        train_correct = 0
+            running_loss = 0.0
+            running_acc = 0.0
+            step = 0
 
-        for x_batch, y_batch in train_dl:
-            x_batch, y_batch = x_batch.to(device), y_batch.to(device)
-            optimizer.zero_grad()  # 1. Restart gradients
-            pred = model(x_batch)  # 2. Forward pass
-            loss = loss_fn(pred, y_batch.float())  # 3. Calc loss
+            for x, y in dataloader:
+                x = x.cuda()
+                y = y.cuda()
+                step += 1
 
-            loss.backward()  # 4. Backward pass
-            optimizer.step()  # 5. Step forward
+                if phase == 'train':
+                    optimizer.zero_grad()
+                    outputs = model(x)
+                    loss = loss_fn(outputs, y.long())
+                    loss.backward()
+                    optimizer.step()
+                else:
+                    with torch.no_grad():
+                        outputs = model(x)
+                        loss = loss_fn(outputs, y.long())
 
-            train_loss += loss.item() * x_batch.size(0)  # Accumulate loss
-            train_correct += compute_accuracy(pred, y_batch) * x_batch.size(0)  # Accumulate correct predictions
+                acc = acc_fn(outputs, y)
 
-        model.eval()
-        valid_loss = 0.0
-        valid_correct = 0
+                running_acc += acc * dataloader.batch_size
+                running_loss += loss * dataloader.batch_size
 
-        with torch.no_grad():
-            for x_batch, y_batch in valid_dl:
-                x_batch, y_batch = x_batch.to(device), y_batch.to(device)
-                pred = model(x_batch)  # 1. Predict
-                loss = loss_fn(pred, y_batch.float())  # 2. Calc loss
+                if step % 50 == 0:
+                    print(f'Current step: {step}  Loss: {loss:.4f}  Acc: {acc:.4f}')
 
-                valid_loss += loss.item() * x_batch.size(0)  # Accumulate loss
-                valid_correct += compute_accuracy(pred, y_batch) * x_batch.size(0)  # Accumulate correct predictions
+            epoch_loss = running_loss / len(dataloader.dataset)
+            epoch_acc = running_acc / len(dataloader.dataset)
 
-        train_hist_loss[epoch] = train_loss / len(train_dl.dataset)
-        train_hist_acc[epoch] = train_correct / len(train_dl.dataset)
-        valid_hist_loss[epoch] = valid_loss / len(valid_dl.dataset)
-        valid_hist_acc[epoch] = valid_correct / len(valid_dl.dataset)
+            print(f'{phase} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}')
 
-        torch.cuda.empty_cache()
+            train_loss.append(epoch_loss) if phase == 'train' else valid_loss.append(epoch_loss)
+            train_acc_history.append(epoch_acc) if phase == 'train' else valid_acc_history.append(epoch_acc)
 
-        elapsed_time = (time.time() - start_time) / 60
-        print(f'--------------------------------------------------')
-        print(f'Epoch {epoch + 1}, time elapsed: {elapsed_time:.2f} min\n'
-              f'Training accuracy: {train_hist_acc[epoch]:.4f}, Training loss: {train_hist_loss[epoch]:.4f}\n'
-              f'Validation accuracy: {valid_hist_acc[epoch]:.4f}, Validation loss: {valid_hist_loss[epoch]:.4f}')
-
-    return train_hist_acc, train_hist_loss, valid_hist_acc, valid_hist_loss
+    return train_loss, valid_loss, train_acc_history, valid_acc_history
