@@ -4,3 +4,4 @@ supervised-learning/imdb-review-classification/movie_data.csv
 __pycache__/
 deep-learning/mnist_classification/MNIST
 deep-learning/CelebA-attributes-classification/archive
+deep-learning/satellite-images-cloud-segmentation/archive
