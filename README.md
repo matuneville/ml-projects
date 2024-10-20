@@ -12,7 +12,7 @@ This repository contains a variety of Machine Learning projects and implementati
 
 
 - **IMDb Review Classification**: This task involves categorizing IMDb movie reviews as positive or negative using various Natural Language Processing techniques.
-  - [**RNN with LSTM**](deep-learning/imdb-sentiment-predict/RNN-classifier.ipynb): This approach utilizes recurrent neural networks (RNNs) with long short-term memory (LSTM) cells to effectively capture the sequential nature of text data, improving classification with an accuracy of 0.87.
+  - [**RNN with LSTM**](deep-learning/imdb_analysis_RNN.ipynb): This approach utilizes recurrent neural networks (RNNs) with long short-term memory (LSTM) cells to effectively capture the sequential nature of text data, improving classification with an accuracy of 0.87.
   - [**Traditional and Out-of-Core Learning (Logistic approach)**](supervised-learning/imdb-review-classification/imdb.ipynb): This section examines traditional machine learning techniques for review classification, along with out-of-core learning methods designed for handling larger datasets with more efficiency. Additionally, it explores a potential unsupervised topic classification method for further categorization of reviews.
 
 
