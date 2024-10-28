@@ -5,3 +5,4 @@ __pycache__/
 deep-learning/mnist_classification/MNIST
 deep-learning/CelebA-attributes-classification/archive
 deep-learning/satellite-images-cloud-segmentation/archive
+deep-learning/imdb_analysis_BERT/finetuned_imdb_bert
