@@ -4,6 +4,8 @@ This repository contains a variety of Machine Learning projects and implementati
 
 ## Cool projects
 
+- [**Sentence Grammar Acceptability (Español)**](NLP-with-transformers/BERT_spanish_sentence_acceptability/fine-tuning_BERT.ipynb): This project fine-tunes a BERT model to evaluate the grammatical acceptability of sentences in Spanish. Starting with a text pre-processing, that includes tokenizing sentences with a pre-trained BERT tokenizer, padding tokens, and creating attention masks, the model is then trained on labeled data (grammatically correct and incorrect sentences). The model learns to classify sentences with a high level of accuracy. Practical applications include grammar-checking tools or enhancing language-learning platforms. 
+
 
 - [**U-Net Cloud Segmentation**](/deep-learning/satellite-images-cloud-segmentation): This project implements a U-Net model from scratch for segmenting clouds in satellite images, based on the architecture from the [original U-Net paper for Biomedical Image Segmentation](https://arxiv.org/pdf/1505.04597). The model is designed to handle multi-channel inputs (RGB and near-infrared) for accurate cloud classification, providing pixel-wise segmentation of clouds in satellite imagery. _The implementation is complete, but the model is pending training and fine-tuning due to the high computational cost involved_.
 
@@ -28,6 +30,7 @@ This repository contains a variety of Machine Learning projects and implementati
 ### Main sources
 
 - _**Machine Learning with PyTorch and Scikit-Learn**_. Book by Liu Yuxi, Sebastian Raschka, and Vahid Mirjalili
+- _**Transformers for Natural Language Processing and Computer Vision - Third Edition**_. Denis Rothman
 - _**Practical Statistics for Data Scientists**: 50+ Essential Concepts Using R and Python_. Book by Andrew Bruce, Peter Bruce, and Peter Gedeck
 
 Additional papers and Medium articles are referenced within the specific projects when applied.
